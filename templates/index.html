@@ -1,9 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Performance Analyzer</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            text-align: center;
+            padding: 50px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 320px;
+            margin: auto;
+            box-shadow: 0px 10px 25px rgba(0,0,0,0.2);
+        }
+
+        input {
+            padding: 10px;
+            margin: 10px;
+            width: 80%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #4facfe;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #00c6ff;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>Student Analyzer</h2>
+
+    <input type="number" id="m1" placeholder="Mark 1">
+    <input type="number" id="m2" placeholder="Mark 2">
+    <input type="number" id="m3" placeholder="Mark 3">
+
+    <br>
+    <button onclick="analyze()">Analyze</button>
+
+    <div id="result"></div>
+</div>
+
 <script>
 function analyze() {
     let m1 = document.getElementById("m1").value;
     let m2 = document.getElementById("m2").value;
     let m3 = document.getElementById("m3").value;
 
+    // validation
     if (!m1 || !m2 || !m3) {
         alert("Please enter all marks");
         return;
@@ -18,7 +85,7 @@ function analyze() {
         },
         body: JSON.stringify({ marks: marks })
     })
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
         if (data.result) {
             document.getElementById("result").innerText = data.result;
@@ -26,9 +93,12 @@ function analyze() {
             document.getElementById("result").innerText = data.error;
         }
     })
-    .catch(err => {
-        document.getElementById("result").innerText = "Request failed";
-        console.error(err);
+    .catch(error => {
+        document.getElementById("result").innerText = "Error connecting to server";
+        console.error(error);
     });
 }
 </script>
+
+</body>
+</html>
