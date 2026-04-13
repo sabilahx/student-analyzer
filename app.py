@@ -17,10 +17,24 @@ def home():
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    data = request.json
+    data = request.get_json()
+
+    if not data or 'marks' not in data:
+        return jsonify({"error": "Invalid input"}), 400
+
     marks = data['marks']
+
+    if not isinstance(marks, list) or len(marks) == 0:
+        return jsonify({"error": "Marks must be a non-empty list"}), 400
+
+    try:
+        marks = [int(m) for m in marks]
+    except:
+        return jsonify({"error": "Marks must be numbers"}), 400
+
     result = analyze_student(marks)
+
     return jsonify({"result": result})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
