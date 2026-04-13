@@ -1,15 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 
-app = Flask(__name__)
+from flask import Flask, request, jsonify, render_template
 
-def analyze_student(marks):
-    avg = sum(marks) / len(marks)
-    if avg > 75:
-        return "Excellent"
-    elif avg > 50:
-        return "Average"
-    else:
-        return "Needs Improvement"
+app = Flask(__name__)
 
 @app.route('/')
 def home():
@@ -17,24 +10,35 @@ def home():
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
-    data = request.get_json()
-
-    if not data or 'marks' not in data:
-        return jsonify({"error": "Invalid input"}), 400
-
-    marks = data['marks']
-
-    if not isinstance(marks, list) or len(marks) == 0:
-        return jsonify({"error": "Marks must be a non-empty list"}), 400
-
     try:
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "No data received"}), 400
+
+        marks = data.get("marks")
+
+        if not marks or not isinstance(marks, list):
+            return jsonify({"error": "Marks must be a list"}), 400
+
+        # Convert safely
         marks = [int(m) for m in marks]
-    except:
-        return jsonify({"error": "Marks must be numbers"}), 400
 
-    result = analyze_student(marks)
+        avg = sum(marks) / len(marks)
 
-    return jsonify({"result": result})
+        if avg > 75:
+            result = "Excellent"
+        elif avg > 50:
+            result = "Average"
+        else:
+            result = "Needs Improvement"
+
+        return jsonify({"result": result})
+
+    except Exception as e:
+        print("ERROR:", e)  # 🔥 important
+        return jsonify({"error": "Server error"}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)
